@@ -12,20 +12,16 @@ public class UserDao {
         this.connectionMaker = connectionMaker;
     }
 
-    public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection connection = connectionMaker.openConnection();
-
-        PreparedStatement ps = connection.prepareStatement(
-            "insert into users(id, name, password) values(?,?,?)"
-        );
-        ps.setString(1, user.getId());
-        ps.setString(2, user.getName());
-        ps.setString(3, user.getPassword());
-
-        ps.executeUpdate();
-
-        ps.close();
-        connection.close();
+    public void add(final User user) {
+        jdbcContentWithStatementStrategy((con) -> {
+            PreparedStatement ps = con.prepareStatement(
+                "insert into users(id, name, password) values(?,?,?)"
+            );
+            ps.setString(1, user.getId());
+            ps.setString(2, user.getName());
+            ps.setString(3, user.getPassword());
+            return ps;
+        });
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
@@ -49,17 +45,17 @@ public class UserDao {
         return user;
     }
 
-    public void deleteAll() throws ClassNotFoundException, SQLException {
-        Connection connection = connectionMaker.openConnection();
+    public void deleteAll() {
+        jdbcContentWithStatementStrategy((con) -> con.prepareStatement("delete from users"));
+    }
 
-        PreparedStatement ps = connection.prepareStatement(
-            "delete from users"
-        );
-
-        ps.executeUpdate();
-
-        ps.close();
-        connection.close();
+    private void jdbcContentWithStatementStrategy(StatementStrategy strategy) {
+        try (Connection c = connectionMaker.openConnection();
+             PreparedStatement ps = strategy.makePreparedStatement(c)) {
+            ps.executeUpdate();
+        } catch (SQLException | ClassNotFoundException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     public int count() throws ClassNotFoundException, SQLException {
