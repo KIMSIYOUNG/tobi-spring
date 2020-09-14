@@ -1,17 +1,19 @@
 package com.example.tobibookspring;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserDao {
+    private final ConnectionMaker connectionMaker;
+
+    public UserDao(ConnectionMaker connectionMaker) {
+        this.connectionMaker = connectionMaker;
+    }
+
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Class.forName("org.h2.Driver");
-        Connection connection = DriverManager.getConnection(
-            "jdbc:h2://localhost/spring", "spring", "book"
-        );
+        Connection connection = connectionMaker.openConnection();
 
         PreparedStatement ps = connection.prepareStatement(
             "insert into users(id, name, password) values(?,?,?)"
@@ -27,10 +29,7 @@ public class UserDao {
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        Class.forName("org.h2.Driver");
-        Connection connection = DriverManager.getConnection(
-            "jdbc:h2://localhost/spring", "spring", "book"
-        );
+        Connection connection = connectionMaker.openConnection();
 
         PreparedStatement ps = connection.prepareStatement(
             "select * from users where id = ?"
@@ -48,5 +47,18 @@ public class UserDao {
         connection.close();
 
         return user;
+    }
+
+    public void deleteAll() throws ClassNotFoundException, SQLException {
+        Connection connection = connectionMaker.openConnection();
+
+        PreparedStatement ps = connection.prepareStatement(
+            "delete from users"
+        );
+
+        ps.executeUpdate();
+
+        ps.close();
+        connection.close();
     }
 }

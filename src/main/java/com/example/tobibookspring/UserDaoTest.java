@@ -2,9 +2,11 @@ package com.example.tobibookspring;
 
 import java.sql.SQLException;
 
-public class Main {
+public class UserDaoTest {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        UserDao dao = new UserDao();
+        UserDao dao = new DaoFactory().userDao();
+
+        dao.deleteAll();
 
         User user = new User();
         user.setId("kyle");
