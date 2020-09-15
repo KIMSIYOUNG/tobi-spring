@@ -6,9 +6,9 @@ import java.io.IOException;
 
 public class Calculator {
 
-    public int lineReadTemplate(String path, BufferedReaderCallback callback, int initVal) {
+    public <T> T lineReadTemplate(String path, LineCallBack<T> callback, T initVal) {
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            int res = initVal;
+            T res = initVal;
             String line = null;
             while ((line = br.readLine()) != null) {
                 res = callback.doSomethingWithLine(line, res);
