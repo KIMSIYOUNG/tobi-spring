@@ -1,6 +1,4 @@
-package com.example.tobibookspring;
-
-import java.sql.SQLException;
+package com.example.tobibookspring.db;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

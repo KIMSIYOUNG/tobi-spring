@@ -1,4 +1,4 @@
-package com.example.tobibookspring;
+package com.example.tobibookspring.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

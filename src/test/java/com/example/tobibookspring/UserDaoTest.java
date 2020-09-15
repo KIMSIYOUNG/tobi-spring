@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
+import com.example.tobibookspring.db.User;
+import com.example.tobibookspring.db.UserDao;
+
 @SpringBootTest
 class UserDaoTest {
     @Autowired
