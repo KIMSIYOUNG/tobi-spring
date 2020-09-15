@@ -7,13 +7,15 @@ import java.sql.SQLException;
 
 public class UserDao {
     private final ConnectionMaker connectionMaker;
+    private final JdbcContext jdbcContext;
 
-    public UserDao(ConnectionMaker connectionMaker) {
+    public UserDao(ConnectionMaker connectionMaker, JdbcContext jdbcContext) {
         this.connectionMaker = connectionMaker;
+        this.jdbcContext = jdbcContext;
     }
 
     public void add(final User user) {
-        jdbcContentWithStatementStrategy((con) -> {
+        jdbcContext.workWithStatementStrategy((con) -> {
             PreparedStatement ps = con.prepareStatement(
                 "insert into users(id, name, password) values(?,?,?)"
             );
@@ -46,16 +48,11 @@ public class UserDao {
     }
 
     public void deleteAll() {
-        jdbcContentWithStatementStrategy((con) -> con.prepareStatement("delete from users"));
+        executeSql("delete from users");
     }
 
-    private void jdbcContentWithStatementStrategy(StatementStrategy strategy) {
-        try (Connection c = connectionMaker.openConnection();
-             PreparedStatement ps = strategy.makePreparedStatement(c)) {
-            ps.executeUpdate();
-        } catch (SQLException | ClassNotFoundException throwables) {
-            throwables.printStackTrace();
-        }
+    private void executeSql(String sql) {
+        jdbcContext.workWithStatementStrategy((con) -> con.prepareStatement(sql));
     }
 
     public int count() throws ClassNotFoundException, SQLException {

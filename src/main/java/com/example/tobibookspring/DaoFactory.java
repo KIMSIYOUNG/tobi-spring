@@ -1,5 +1,7 @@
 package com.example.tobibookspring;
 
+import java.sql.SQLException;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,13 +11,20 @@ public class DaoFactory {
     public UserDao userDao() {
         ConnectionMaker connectionMaker = new DConnectionMaker();
 
-        return new UserDao(connectionMaker);
+        return new UserDao(connectionMaker, jdbcContext());
+    }
+
+    @Bean
+    public JdbcContext jdbcContext() {
+        JdbcContext jdbcContext = new JdbcContext(new DConnectionMaker());
+
+        return jdbcContext;
     }
 
     @Bean
     public UserDao userCountingDao() {
         ConnectionMaker connectionMaker = new CountingConnectionMaker(new DConnectionMaker());
 
-        return new UserDao(connectionMaker);
+        return new UserDao(connectionMaker, jdbcContext());
     }
 }
