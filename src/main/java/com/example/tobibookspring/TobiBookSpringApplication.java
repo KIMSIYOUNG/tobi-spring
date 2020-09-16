@@ -1,4 +1,4 @@
-package com.example.tobibookspring.db;
+package com.example.tobibookspring;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
